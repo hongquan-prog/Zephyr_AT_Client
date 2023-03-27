@@ -1,0 +1,18 @@
+description: ebyte zigbee module
+
+compatible: "ebyte,e180-zg120b"
+
+include: uart-device.yaml
+
+properties:
+  nrst-gpios:
+    type: phandle-array
+    required: true
+
+  network-gpios:
+    type: phandle-array
+    required: true
+
+  baud-reset-gpios:
+    type: phandle-array
+    required: true

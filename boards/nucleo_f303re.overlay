@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2022-2022, lihongquan
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-3-26      lihongquan   port to zephyr
+ */
+
+/ {
+    chosen {
+        zigbee,uart = &usart1;
+        zephyr,zigbee = &zigbee;
+    };
+};
+
+&usart1 {
+    zigbee: e180-zg120b {
+            compatible = "ebyte,e180-zg120b";
+
+            nrst-gpios = <&gpioa 7 GPIO_ACTIVE_LOW>;
+            network-gpios = <&gpiob 6 GPIO_ACTIVE_HIGH>;
+            baud-reset-gpios = <&gpioc 7 GPIO_ACTIVE_HIGH>;
+            status = "okay";
+        };
+};
