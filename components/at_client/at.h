@@ -179,13 +179,7 @@ struct at_client
     rt_mutex_t lock;
 
     at_response_t resp;
-    rt_sem_t resp_notice;
     at_resp_status_t resp_status;
-
-    struct at_urc_table *urc_table;
-    rt_size_t urc_table_size;
-
-    rt_thread_t parser;
 };
 typedef struct at_client *at_client_t;
 #endif /* AT_USING_CLIENT */
@@ -208,7 +202,7 @@ int at_req_parse_args(const char *req_args, const char *req_expr, ...);
 #ifdef AT_USING_CLIENT
 
 /* AT client initialize and start*/
-int at_client_init(com_inface_t *dev,  rt_size_t recv_bufsz);
+int at_client_init(rt_device_t dev,  rt_size_t recv_bufsz);
 
 /* ========================== multiple AT client function ============================ */
 
@@ -216,18 +210,11 @@ int at_client_init(com_inface_t *dev,  rt_size_t recv_bufsz);
 at_client_t at_client_get(const char *dev_name);
 at_client_t at_client_get_first(void);
 
-/* AT client wait for connection to external devices. */
-int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout);
-
 /* AT client send or receive data */
 rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size);
-rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_int32_t timeout);
 
 /* set AT client a line end sign */
 void at_obj_set_end_sign(at_client_t client, char ch);
-
-/* Set URC(Unsolicited Result Code) table */
-int at_obj_set_urc_table(at_client_t client, const struct at_urc * table, rt_size_t size);
 
 /* AT client send commands to AT server and waiter response */
 int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr, ...);
@@ -258,16 +245,6 @@ int at_resp_parse_line_args_by_kw(at_response_t resp, const char *keyword, const
 #define at_set_urc_table(urc_table, table_sz)    at_obj_set_urc_table(at_client_get_first(), urc_table, table_sz)
 
 #endif /* AT_USING_CLIENT */
-
-/* ========================== User port function ============================ */
-
-#ifdef AT_USING_SERVER
-/* AT server device reset */
-void at_port_reset(void);
-
-/* AT server device factory reset */
-void at_port_factory_reset(void);
-#endif
 
 #ifdef __cplusplus
 }
