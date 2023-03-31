@@ -868,7 +868,7 @@ static int at_client_para_init(at_client_t client)
     client->parser = rt_thread_create(name,
                                       (void (*)(void *parameter))client_parser,
                                       client,
-                                      2048,
+                                      6144,
                                       RT_THREAD_PRIORITY_MAX / 3 - 1,
                                       5);
     if (client->parser == RT_NULL)

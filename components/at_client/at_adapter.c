@@ -68,28 +68,26 @@ rt_thread_t rt_thread_create(const char *name,
                              rt_int32_t priority,
                              rt_uint32_t tick)
 {
-    static volatile int tcb_used = 0;
-    static struct k_thread tcb_buf[AT_CLIENT_NUM_MAX] = {0};
-
-    rt_thread_t ret = NULL;
+    rt_thread_t tcb = NULL;
     k_thread_stack_t *stack = NULL;
+    
+    /* MPU 开启后对栈顶设置写保护，栈基地址必须是 Z_KERNEL_STACK_OBJ_ALIGN 整倍数,否则会造成写保护被错误触发，程序不能正常运行 */
+    stack = k_aligned_alloc(Z_KERNEL_STACK_OBJ_ALIGN, Z_KERNEL_STACK_SIZE_ADJUST(stack_size));
+    tcb = k_malloc(sizeof(struct k_thread));
+    memset(tcb, 0, sizeof(struct k_thread));
 
-    ret = tcb_buf + tcb_used;
-    stack = rt_malloc(sizeof(uint8_t *) * stack_size);
-
-    if (ret && stack)
+    if (tcb && stack)
     {
-        k_thread_create(ret, stack, stack_size, (k_thread_entry_t)entry, parameter, NULL, NULL, priority, 0, K_FOREVER);
-        tcb_used++;
+        k_thread_create(tcb, stack, stack_size, (k_thread_entry_t)entry, parameter, NULL, NULL, priority, 0, K_NO_WAIT);
     }
     else
     {
-        rt_free(ret);
+        rt_free(tcb);
         rt_free(stack);
-        ret = NULL;
+        tcb = NULL;
     }
 
-    return ret;
+    return tcb;
 }
 
 void rt_thread_startup(rt_thread_t thread)
