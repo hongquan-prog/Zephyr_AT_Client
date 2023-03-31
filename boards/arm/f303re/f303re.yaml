@@ -1,0 +1,12 @@
+identifier: f303re
+name: STM32F303RE
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+ram: 80
+flash: 512
+supported:
+
